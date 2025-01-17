@@ -119,7 +119,7 @@ class _TodoListPageState extends State<TodoListPage> {
                           if (result != null) {
                             todos = result;
                           }
-                          // Even if result is null, this setState will trigger a refresh
+                          // Trigger todolist refresh
                         });
                       }
                     });

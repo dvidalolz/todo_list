@@ -2,13 +2,13 @@ class Todo {
   final String name;
   final String description;
   final DateTime? dueDate;
-  bool isCompleted;  // New field to track completion status
+  bool isCompleted; 
 
   Todo({
     required this.name,
     required this.description,
     this.dueDate,
-    this.isCompleted = false, // Default to false
+    this.isCompleted = false, 
   });
 
   // Method to toggle completion status

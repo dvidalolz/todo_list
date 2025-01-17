@@ -45,25 +45,23 @@ class CompletedTasksPage extends StatelessWidget {
                     color: Colors.white,
                     child: Dismissible(
                       key: Key(todo.name),
-                      direction: DismissDirection.startToEnd, // Swipe from left to right to undo completion
+                      direction: DismissDirection.startToEnd,
                       onDismissed: (direction) {
-                        // Find the todo in the original list and mark it as incomplete
+                        // Find the todo and mark it as incomplete
                         int todoIndex = todos.indexWhere((element) => element.name == todo.name);
                         if (todoIndex != -1) {
                           todos[todoIndex].isCompleted = false;
-                          // Here, you would typically update your state if this was a StatefulWidget
-                          // Since this is a StatelessWidget, you'll need to notify the parent widget to rebuild
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text("Todo marked as incomplete", style: TextStyle(color: Colors.white)),
                               backgroundColor: Colors.blue,
                             ),
                           );
-                          Navigator.pop(context); // Return to the previous page which should rebuild with the new state
+                          Navigator.pop(context); // Return to previous page which rebuilds with new state
                         }
                       },
                       background: Container(
-                        color: Colors.blue, // Changed to blue to match the theme
+                        color: Colors.blue,
                         alignment: Alignment.centerLeft,
                         padding: EdgeInsets.only(left: 20.0),
                         child: Icon(Icons.undo, color: Colors.white),
@@ -73,7 +71,7 @@ class CompletedTasksPage extends StatelessWidget {
                         subtitle: Text(todo.description, style: TextStyle(color: Colors.grey[600])),
                         trailing: Text(
                           todo.dueDate != null 
-                            ? todo.dueDate!.toIso8601String().substring(0, 10) // Display only date
+                            ? todo.dueDate!.toIso8601String().substring(0, 10)
                             : 'No Due Date',
                           style: TextStyle(color: Colors.blue.shade700),
                         ),

@@ -32,7 +32,7 @@ class SettingPage extends StatelessWidget {
                 // Sort todos by due date, null dates go to the end
                 List<Todo> sortedTodos = List.from(todos);
                 sortedTodos.sort((a, b) {
-                  if (a.dueDate == null) return 1; // Moves null dates to the end
+                  if (a.dueDate == null) return 1; 
                   if (b.dueDate == null) return -1;
                   return a.dueDate!.compareTo(b.dueDate!);
                 });
@@ -41,7 +41,7 @@ class SettingPage extends StatelessWidget {
                 Navigator.pop(context, sortedTodos);
               },
             ),
-            Divider(color: Colors.blue.shade200), // Add a divider for better visual separation
+            Divider(color: Colors.blue.shade200),
             ListTile(
               leading: Icon(Icons.check_circle, color: Colors.blue.shade700),
               title: Text('Completed Tasks', style: TextStyle(color: Colors.blue.shade700)),

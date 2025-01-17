@@ -1,16 +1,25 @@
-# flutter_project
+# Todo List App
 
-A new Flutter project.
+This is an application for a simple and elegant todo list, without all the frills and complicated features that make modern applications so daunting and excluding to the average user.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Todo list : Present the list of todos as created with a crisp sliding feature to delete, a well as a checkbox. Todo title, description and due date also included
+- Add todos : Create news tasks with name, description and a due date
+- Edit todos: Modify exists todos names, description and due date
+- Marks as complete and incomplete: Can check or slide to dismiss from main todo page. Can slide to return from completed tasks to current tasks
+- Sort by due dateL: Organize tasks by their due date
+- View completed tasks: Separate page which includes all tasks that have ever been marked as complete. Can restore these completed tasks
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Setup
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Prerequisites
+- Install Flutter sdk on your machine
+- Use any IDE with flutter support such as android studios or vscode
+
+### Installation
+1) Clone repository
+2) flutter pub get - to get dependencies from pubspec.yaml
+3) cd flutter_project - navigate to project directory
+4) flutter run

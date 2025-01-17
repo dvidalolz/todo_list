@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/todo_model.dart'; // Added import for Todo model
-
+import 'package:flutter_project/todo_model.dart'; 
 class EditTodoPage extends StatefulWidget {
   final Todo todo;
 
