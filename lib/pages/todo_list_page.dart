@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project/pages/add_todo_page.dart';
 import 'package:flutter_project/pages/edit_todo_page.dart';
 import 'package:flutter_project/pages/setting_page.dart';
+import 'package:flutter_project/todo_model.dart';
 
 class TodoListPage extends StatefulWidget {
   @override
@@ -9,107 +10,151 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
-  List<Map<String, dynamic>> todos = [];
+  List<Todo> todos = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Todo List'),
+        title: Text('Todo List', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue,
+        elevation: 0,
       ),
-      body: Stack(
-        children: <Widget>[
-          ListView.builder(
-            itemCount: todos.length,
-            itemBuilder: (context, index) {
-              return Dismissible(
-                key: Key(todos[index]['name']),
-                direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-                  setState(() {
-                    todos.removeAt(index);
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Todo removed")),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, Colors.blue[50]!],
+          ),
+        ),
+        child: Stack(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 60.0),
+              child: ListView.builder(
+                itemCount: todos.where((todo) => !todo.isCompleted).length,
+                itemBuilder: (context, index) {
+                  final filteredTodos = todos.where((todo) => !todo.isCompleted).toList();
+                  final todo = filteredTodos[index];
+
+                  return Card(
+                    margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    color: Colors.white,
+                    child: Dismissible(
+                      key: Key(todo.name),
+                      direction: DismissDirection.startToEnd,
+                      onDismissed: (direction) {
+                        setState(() {
+                          todo.isCompleted = true;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Todo marked as completed", style: TextStyle(color: Colors.white)), backgroundColor: Colors.blue),
+                        );
+                      },
+                      background: Container(
+                        color: Colors.green,
+                        alignment: Alignment.centerRight,
+                        padding: EdgeInsets.only(right: 20.0),
+                        child: Icon(Icons.done, color: Colors.white),
+                      ),
+                      child: ListTile(
+                        onTap: () async {
+                          var updatedTodo = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditTodoPage(todo: todo),
+                            ),
+                          );
+                          if (updatedTodo != null) {
+                            setState(() {
+                              int todoIndex = todos.indexOf(todo);
+                              todos[todoIndex] = Todo.fromMap(updatedTodo);
+                            });
+                          }
+                        },
+                        leading: Checkbox(
+                          value: todo.isCompleted,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              todo.toggleCompletion();
+                            });
+                          },
+                          activeColor: Colors.blue,
+                        ),
+                        title: Text(todo.name, style: TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text(todo.description, style: TextStyle(color: Colors.grey[600])),
+                        trailing: Text(
+                          todo.dueDate != null
+                              ? todo.dueDate!.toIso8601String().substring(0, 10)
+                              : 'No Due Date',
+                          style: TextStyle(color: Colors.blue.shade700),
+                        ),
+                      ),
+                    ),
                   );
                 },
-                background: Container(
-                  color: Colors.red,
-                  alignment: Alignment.centerRight,
-                  padding: EdgeInsets.only(right: 20.0),
-                  child: Icon(Icons.delete, color: Colors.white),
-                ),
-                child: ListTile(
-                  onTap: () async {
-                    var updatedTodo = await Navigator.push(
+              ),
+            ),
+            // Settings button
+            Positioned(
+              top: 0,
+              left: 0,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditTodoPage(todoData: todos[index]),
+                        builder: (context) => SettingPage(todos: todos),
                       ),
+                    ).then((result) {
+                      if (mounted) {
+                        setState(() {
+                          if (result != null) {
+                            todos = result;
+                          }
+                          // Even if result is null, this setState will trigger a refresh
+                        });
+                      }
+                    });
+                  },
+                  child: Icon(Icons.more_vert, color: Colors.white),
+                  backgroundColor: Colors.blue,
+                  mini: true,
+                ),
+              ),
+            ),
+            // Add Todo button
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    var newTodo = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddTodoPage()),
                     );
-                    if (updatedTodo != null) {
+                    if (newTodo != null) {
                       setState(() {
-                        todos[index] = updatedTodo;
+                        todos.add(Todo.fromMap(newTodo));
                       });
                     }
                   },
-                  leading: Checkbox(
-                    value: false,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        todos.removeAt(index);
-                      });
-                    },
-                  ),
-                  title: Text(todos[index]['name']),
-                  subtitle: Text(todos[index]['description']),
-                  trailing: Text(todos[index]['dueDate']?.toString() ?? 'No Due Date'),
+                  child: Icon(Icons.add, color: Colors.white),
+                  backgroundColor: Colors.blue,
                 ),
-              );
-            },
-          ),
-          // Add Settings button
-          Positioned(
-            top: 0,
-            left: 0,
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: FloatingActionButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingPage()),
-                  );
-                },
-                child: Icon(Icons.more_vert),
-                backgroundColor: Colors.blue,
-                mini: true, // Makes the button smaller
               ),
             ),
-          ),
-          // Add Todo button
-          Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: FloatingActionButton(
-                onPressed: () async {
-                  var newTodo = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddTodoPage()),
-                  );
-                  if (newTodo != null) {
-                    setState(() {
-                      todos.add(newTodo);
-                    });
-                  }
-                },
-                child: Icon(Icons.add),
-                backgroundColor: Colors.blue,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
